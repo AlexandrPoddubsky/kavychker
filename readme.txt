@@ -8,7 +8,7 @@ Stable tag: trunk
 It's normal typography plugin for WordPress
 == Description ==
 
-Plugin transform - to &amp;ndash;, make <nobr></nobr> where it needed, make normal quotes.
+Plugin transform - to &amp;ndash;, make &lt;nobr&gt;&lt/nobr&gt; where it needed, make normal quotes.
 
 == Installation ==
 
