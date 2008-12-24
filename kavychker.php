@@ -3,13 +3,13 @@
 /*
 Plugin Name: Kavychker
 Plugin URI: http://mbyte.org.ua/
-Description: Replace plain text symbols with html entities (uses modified <a href="http://textus.ru">Kavychker&copy;</a> code) (wp2.5)
-Version: 0.2
+Description: Replace plain text symbols with html entities (uses modified <a href="http://textus.ru">Kavychker&copy;</a> code) (wp2.5 and higher)
+Version: 1.0
 Author: mByte
-Author URI: http://mbzeus.net/
+Author URI: http://mbyte.org.ua/personal/
 */
 
-/*  Copyright 2007  mByte  (email : mbyte@mbzeus.net)
+/*  Copyright 2007-2009  mByte  (email : mbyte@mbyte.org.ua)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,6 +31,8 @@ add_action('admin_head', 'kavychker_add');
 add_action('admin_footer', 'kavychker_footer');
 
 function kavychker_add() {
+if (preg_match("/page[\-new]+\.php/",$_SERVER['REQUEST_URI']) || preg_match("/post[\-new]+\.php/",$_SERVER['REQUEST_URI'])) {
+
 ?><script type="text/javascript">
 
 function ht()
@@ -39,7 +41,7 @@ document.post.content.focus();
 s = " "+document.post.content.value;
 $before=s.length;
 
-// РєР°РІС‹С‡РєРё
+// кавычки
 if (document.post.what.value=="1")
 {
 i=0;
@@ -56,31 +58,31 @@ s = s.replace(r, "\x01"+i+"\x02");
 }
 
 // wordfix
-s = s.replace(/В«/g, "\"");
-s = s.replace(/В»/g, "\"");
-s = s.replace(/вЂњ/g, "\"");
-s = s.replace(/вЂќ/g, "\"");
-s = s.replace(/вЂћ/g, "\"");
-s = s.replace(/вЂ¦/g, "...");
-s = s.replace(/вЂ“/g, "-");
-s = s.replace(/вЂ”/g, "-");
+s = s.replace(/З/g, "\"");
+s = s.replace(/И/g, "\"");
+s = s.replace(/Т/g, "\"");
+s = s.replace(/У/g, "\"");
+s = s.replace(/Ч/g, "\"");
+s = s.replace(/Й/g, "...");
+s = s.replace(/Р/g, "-");
+s = s.replace(/С/g, "-");
 
 // kavychking
-s = s.replace(/([\x01-(\s\"])(\")([^\"]{1,})([^\s\"(])(\")/g, "$1В«$3$4В»");
+s = s.replace(/([\x01-(\s\"])(\")([^\"]{1,})([^\s\"(])(\")/g, "$1З$3$4И");
 
 
 // kavychking in kavychking
 if (/"/.test(s))
 {
-s = s.replace(/([\x01(\s\"])(\")([^\"]{1,})([^\s\"(])(\")/g, "$1В«$3$4В»");
-while (/(В«)([^В»]*)(В«)/.test(s))
-s = s.replace(/(В«)([^В»]*)(В«)([^В»]*)(В»)/g, "$1$2&bdquo;$4&ldquo;");
+s = s.replace(/([\x01(\s\"])(\")([^\"]{1,})([^\s\"(])(\")/g, "$1З$3$4И");
+while (/(З)([^И]*)(З)/.test(s))
+s = s.replace(/(З)([^И]*)(З)([^И]*)(И)/g, "$1$2&bdquo;$4&ldquo;");
 }
 
 s = s.replace (/  +/g,' '); 
 
-s = s.replace (/В«/g,'&laquo;'); 
-s = s.replace (/В»/g,'&raquo;'); 
+s = s.replace (/З/g,'&laquo;'); 
+s = s.replace (/И/g,'&raquo;'); 
 s = s.replace (/ -{1,2} /g,'&nbsp;&#151; '); 
 s = s.replace (/\.{3}/g,'&hellip;'); 
 s = s.replace (/([>|\s])- /g,"$1&#151; "); 
@@ -90,30 +92,30 @@ s = s.replace (/(\d)-(\d)/g, "$1&#150;$2");
 s = s.replace (/(\S+)-(\S+)/g, "<nobr>$1-$2</nobr>");
 s = s.replace (/(\d)\s/g, "$1&nbsp;");
 
-s = s.replace (/([Рђ-РЇР°-СЏA-Za-z]) (Р»Рё|Р»СЊ|Р¶Рµ|Р¶|Р±С‹|Р±|РјР»РЅ|РјР»СЂРґ|СЂСѓР±)([^Рђ-РЇР°-СЏA-Za-z])/gi, '$1&nbsp;$2$3' );
-s = s.replace (/(\s)([Рђ-РЇР°-СЏ]{1})\s/g, '$1$2&nbsp;' );
+s = s.replace (/([Ђ-џа-ЯA-Za-z]) (ли|ль|же|ж|бы|б|млн|млрд|руб)([^Ђ-џа-ЯA-Za-z])/gi, '$1&nbsp;$2$3' );
+s = s.replace (/(\s)([Ђ-џа-Я]{1})\s/g, '$1$2&nbsp;' );
 
-// РёРЅРёС†РёР°Р»С‹ 
+// инициалы 
 
-// A.C. РџСѓС€РєРёРЅ
-s = s.replace (/([Рђ-РЇA-Z])([\. ]{1})[ ]{0,1}([Рђ-РЇA-Z])([\. ]{1})[ ]{0,1}([Рђ-РЇA-Z][Рђ-РЇР°-СЏA-Za-z]*)/g, '$1.&nbsp;$3.&nbsp;$5');
+// A.C. Џушкин
+s = s.replace (/([Ђ-џA-Z])([\. ]{1})[ ]{0,1}([Ђ-џA-Z])([\. ]{1})[ ]{0,1}([Ђ-џA-Z][Ђ-џа-ЯA-Za-z]*)/g, '$1.&nbsp;$3.&nbsp;$5');
 
-// РџСѓС€РєРёРЅ Рђ. РЎ.
-s = s.replace (/([Рђ-РЇA-Z][Рђ-РЇР°-СЏA-Za-z]*) ([Рђ-РЇA-Z])[\. ]{1}[ ]{0,1}([Рђ-РЇA-Z])\.([,\ )]{1})/g, '$1&nbsp;$2.&nbsp;$3.$4');
+// Џушкин Ђ. ‘.
+s = s.replace (/([Ђ-џA-Z][Ђ-џа-ЯA-Za-z]*) ([Ђ-џA-Z])[\. ]{1}[ ]{0,1}([Ђ-џA-Z])\.([,\ )]{1})/g, '$1&nbsp;$2.&nbsp;$3.$4');
 
-// СЃРѕРєСЂР°С‰РµРЅРёСЏ С‚РёРїР° СѓР».
+// сокращениЯ типа ул.
 
-s = s.replace (/(\s[Р°-СЏ]{1,2})\.\s/g, '$1.&nbsp;' );
+s = s.replace (/(\s[а-Я]{1,2})\.\s/g, '$1.&nbsp;' );
 
-// (Рђ.РЎ.РџСѓС€РєРёРЅ)  
- // (РџСѓС€РєРёРЅ Рђ.РЎ) 
- // (РџСѓС€РєРёРЅ Рђ. РЎ) 
+// (Ђ.‘.Џушкин)  
+ // (Џушкин Ђ.‘) 
+ // (Џушкин Ђ. ‘) 
 
 s = s.replace (/'/g, "&#146;");
 s = s.replace (/\(c\)/gi, "&copy;");
 s = s.replace (/\(r\)/gi, "&reg;");
 s = s.replace (/\(tm\)/gi, "&trade;");
-s = s.replace (/в„– /gi, "&#8470;&nbsp;");
+s = s.replace (/Ь /gi, "&#8470;&nbsp;");
 
 
 
@@ -135,70 +137,15 @@ s = s.replace(/<nobr><nobr>/g, "<nobr>");
 s = s.replace(/<\/nobr><\/nobr>/g, "</nobr>");
 
 document.post.content.value=s;
-// alert ("Р’СЃРµ СЃРґРµР»Р°РЅРѕ, Р°РіР°...\nР‘С‹Р»Рѕ Р±Р°Р№С‚: "+$before+"\nРЎС‚Р°Р»Рѕ Р±Р°Р№С‚: "+$after+"\nРС‚РѕРіРѕ РґРѕР±Р°РІР»РµРЅРѕ: "+($after-$before));
 }
-
-function fpreview ()
-{
-var Hnd = window.open ('about:blank', null, 'width=700,height=300');
-Hnd.document.open ();
-Hnd.document.write('<html><head><title>Р’РѕС‚ С‚Р°Рє СЌС‚Рѕ Р±СѓРґРµС‚</title><style type=text/css> body {scrollbar-base-color: #000066; scrollbar-arrow-color: #FFFF00; scrollbar-highlight-color: #FFFFFF; scrollbar-shadow-color: #FFFFFF; scrollbar-face-color: #000000; scrollbar-track-color: #f0f0f0; } body, td {font-family: Georgia, Verdana, Arial; font-size: 12px;} A:link {text-decoration: none; color: #ff8000; text-decoration: underline;} A:visited {text-decoration: none; color: #660099; text-decoration: underline;} A:hover {text-decoration: none; color:#ff0000; text-decoration: underline;}</style></head><body marginwidth=20 marginheight=20 '+
-'leftmargin=20 rightmargin=40 topmargin=20 bottommargin=20 scroll=auto bgcolor=f0f0f0 color-white><p>[ <a href=\'javascript:window.close ();\'>Р·Р°РєСЂС‹С‚СЊ РѕРєРЅРѕ</a> ]<p>'+document.post.content.value+'<p>[ <a href=\'javascript:window.close ("mailDoneWin");\'>Р·Р°РєСЂС‹С‚СЊ РѕРєРЅРѕ</a> ]</body></html>');
-Hnd.document.close();
-}
-
-function fpaste ()
-{
-document.fo.m.value="";
-document.fo.m.focus();
-document.execCommand("paste");
-document.post.content.value=document.fo.m.value;
-}
-
-function fcopy ()
-{
-document.fo.m.value=document.post.content.value;
-document.fo.m.focus();
-document.execCommand("selectall");
-document.execCommand("copy");
-}
-
-function fundo ()
-{
-document.post.content.focus();
-document.execCommand("undo");
-}
-
-function fredo ()
-{
-document.post.content.focus();
-document.execCommand("redo");
-}
-
-function freplace ()
-{
-var char = showModalDialog("charmap.htm", "", "dialogWidth:200px;dialogHeight:100px;help:0;status:no;");
-
-s = document.post.content.value;
-document.post.content.focus();
-sel = document.selection.createRange();
-rto = window.prompt ("Replace: "+sel.text+"\nwith:");
-rfrom = new RegExp (sel.text, "g");
-s = s.replace (rfrom, rto);
-document.post.content.value=s;
-
-}
-
-window.onLoad = function () {
-
-};
 
 </script>
 <?php
-
+}
 }
 
 function kavychker_footer() {
+if (preg_match("/page[\-new]+\.php/",$_SERVER['REQUEST_URI']) || preg_match("/post[\-new]+\.php/",$_SERVER['REQUEST_URI'])) {
 	?>
 	<script type="text/javascript">
 	
@@ -224,6 +171,7 @@ document.getElementById("post").onsubmit = function () {
 	
 	</script>
 	<?php
+	}
 }
 
 ?>
